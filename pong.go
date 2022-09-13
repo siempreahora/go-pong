@@ -36,13 +36,23 @@ func main() {
 	initGameState()
 	inputChan := initUserInput()
 
-	for {
+	for !gameEnd() {
 		handleInput(readInput(inputChan))
 		UpdateState()
 		drawState()
 
 		time.Sleep(75 * time.Millisecond)
 	}
+
+	screenWidth, screenHeight := screen.Size()
+	winner := getWinner()
+	pringStringCentered(screenHeight/2-1, screenWidth/2, "Game Over!")
+	pringStringCentered(screenHeight/2, screenWidth/2, fmt.Sprintf("%s wins!", winner))
+
+	screen.Show()
+
+	time.Sleep(3 * time.Second)
+	screen.Fini()
 }
 
 func UpdateState() {
@@ -97,13 +107,25 @@ func gameEnd() bool {
 }
 
 func getWinner() string {
-	_, screenWidth := screen.Size()
+	screenWidth, _ := screen.Size()
 	if ball.col < 0 {
-		return "Player 1"
-	} else if ball.col >= screenWidth {
 		return "Player 2"
+	} else if ball.col >= screenWidth {
+		return "Player 1"
 	} else {
 		return ""
+	}
+}
+
+func pringStringCentered(row, col int, str string) {
+	col = col - len(str)/2
+	printString(row, col, str)
+}
+
+func printString(row, col int, str string) {
+	for _, c := range str {
+		screen.SetContent(col, row, c, nil, tcell.StyleDefault)
+		col += 1
 	}
 }
 
