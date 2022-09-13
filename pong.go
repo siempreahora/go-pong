@@ -50,6 +50,14 @@ func UpdateState() {
 		gameObjects[i].row += gameObjects[i].velRow
 		gameObjects[i].col += gameObjects[i].velCol
 	}
+
+	if wallCollide(ball) {
+		ball.velRow = -ball.velRow
+	}
+
+	if paddleCollide(ball, playerLeft) || paddleCollide(ball, playerRight) {
+		ball.velCol = -ball.velCol
+	}
 }
 
 func drawState() {
@@ -63,6 +71,25 @@ func drawState() {
 	// drawObject(playerRight.row, playerRight.col, playerRight.width, playerRight.height, PaddleSymbol)
 	// drawObject(ball.row, ball.col, ball.width, ball.height, BallSymbol)
 	screen.Show()
+}
+
+func wallCollide(obj *GameObject) bool {
+	_, screenHeight := screen.Size()
+	return !(obj.row+obj.velRow >= 0 && obj.row+obj.velRow < screenHeight)
+}
+
+func paddleCollide(ball, paddle *GameObject) bool {
+	var collideCol bool
+	if ball.col < paddle.col {
+		collideCol = ball.col+ball.velCol >= paddle.col
+	} else {
+		collideCol = ball.col+ball.velCol <= paddle.col
+
+	}
+
+	return collideCol &&
+		ball.row >= paddle.row &&
+		ball.row < paddle.row+paddle.height
 }
 
 func drawObject(row, col, width, height int, ch rune) {
@@ -110,7 +137,7 @@ func initGameState() {
 
 	ball = &GameObject{
 		row: height / 2, col: width / 2, width: 1, height: 1,
-		velRow: VelocityCol, velCol: VelocityRow,
+		velRow: VelocityRow, velCol: VelocityCol,
 		symbol: BallSymbol,
 	}
 
