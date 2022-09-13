@@ -92,6 +92,21 @@ func paddleCollide(ball, paddle *GameObject) bool {
 		ball.row < paddle.row+paddle.height
 }
 
+func gameEnd() bool {
+	return getWinner() != ""
+}
+
+func getWinner() string {
+	_, screenWidth := screen.Size()
+	if ball.col < 0 {
+		return "Player 1"
+	} else if ball.col >= screenWidth {
+		return "Player 2"
+	} else {
+		return ""
+	}
+}
+
 func drawObject(row, col, width, height int, ch rune) {
 	for r := 0; r < height; r++ {
 		for c := 0; c < width; c++ {
