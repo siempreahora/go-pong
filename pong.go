@@ -30,7 +30,6 @@ var debugLog string
 
 var gameObjects = []*GameObject{}
 
-// This program just prints "Hello, World!".  Press ESC to exit.
 func main() {
 	initScreen()
 	initGameState()
