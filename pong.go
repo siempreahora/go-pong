@@ -8,7 +8,6 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-// const PaddleSymbol = '1'
 const PaddleSymbol = 0x2588
 const BallSymbol = 0x25CF
 
@@ -28,7 +27,7 @@ var playerRight *GameObject
 var ball *GameObject
 var debugLog string
 
-var gameObjects = []*GameObject{}
+var gameObjects []*GameObject
 
 func main() {
 	initScreen()
@@ -73,7 +72,8 @@ func drawState() {
 	screen.Clear()
 
 	for _, obj := range gameObjects {
-		drawObject(obj.row, obj.col, obj.width, obj.height, obj.symbol)
+		//drawObject(obj.row, obj.col, obj.width, obj.height, obj.symbol)
+		drawObject(obj)
 	}
 
 	// drawObject(playerLeft.row, playerLeft.col, playerLeft.width, playerLeft.height, PaddleSymbol)
@@ -128,10 +128,18 @@ func printString(row, col int, str string) {
 	}
 }
 
-func drawObject(row, col, width, height int, ch rune) {
-	for r := 0; r < height; r++ {
-		for c := 0; c < width; c++ {
-			screen.SetContent(col+c, row+r, ch, nil, tcell.StyleDefault)
+//func drawObject(row, col, width, height int, ch rune) {
+//	for r := 0; r < height; r++ {
+//		for c := 0; c < width; c++ {
+//			screen.SetContent(col+c, row+r, ch, nil, tcell.StyleDefault)
+//		}
+//	}
+//}
+//
+func drawObject(o *GameObject) {
+	for r := 0; r < o.height; r++ {
+		for c := 0; c < o.width; c++ {
+			screen.SetContent(o.col+c, o.row+r, o.symbol, nil, tcell.StyleDefault)
 		}
 	}
 }
