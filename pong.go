@@ -8,7 +8,6 @@ import (
 	"github.com/gdamore/tcell/v2"
 )
 
-// const PaddleSymbol = '1'
 const PaddleSymbol = 0x2588
 const BallSymbol = 0x25CF
 
@@ -28,9 +27,8 @@ var playerRight *GameObject
 var ball *GameObject
 var debugLog string
 
-var gameObjects = []*GameObject{}
+var gameObjects []*GameObject
 
-// This program just prints "Hello, World!".  Press ESC to exit.
 func main() {
 	initScreen()
 	initGameState()
@@ -40,7 +38,6 @@ func main() {
 		handleInput(readInput(inputChan))
 		UpdateState()
 		drawState()
-
 		time.Sleep(75 * time.Millisecond)
 	}
 
@@ -51,7 +48,7 @@ func main() {
 
 	screen.Show()
 
-	time.Sleep(3 * time.Second)
+	//time.Sleep(3 * time.Second)
 	screen.Fini()
 }
 
@@ -74,12 +71,8 @@ func drawState() {
 	screen.Clear()
 
 	for _, obj := range gameObjects {
-		drawObject(obj.row, obj.col, obj.width, obj.height, obj.symbol)
+		drawObject(obj)
 	}
-
-	// drawObject(playerLeft.row, playerLeft.col, playerLeft.width, playerLeft.height, PaddleSymbol)
-	// drawObject(playerRight.row, playerRight.col, playerRight.width, playerRight.height, PaddleSymbol)
-	// drawObject(ball.row, ball.col, ball.width, ball.height, BallSymbol)
 	screen.Show()
 }
 
@@ -129,10 +122,10 @@ func printString(row, col int, str string) {
 	}
 }
 
-func drawObject(row, col, width, height int, ch rune) {
-	for r := 0; r < height; r++ {
-		for c := 0; c < width; c++ {
-			screen.SetContent(col+c, row+r, ch, nil, tcell.StyleDefault)
+func drawObject(o *GameObject) {
+	for r := 0; r < o.height; r++ {
+		for c := 0; c < o.width; c++ {
+			screen.SetContent(o.col+c, o.row+r, o.symbol, nil, tcell.StyleDefault)
 		}
 	}
 }
@@ -161,20 +154,31 @@ func initGameState() {
 	paddleStart := height/2 - PaddleHeight/2
 
 	playerLeft = &GameObject{
-		row: paddleStart, col: 0, width: 1, height: PaddleHeight,
-		velRow: 0, velCol: 0,
+		row: paddleStart,
+		col: 0, width: 1,
+		height: PaddleHeight,
+		velRow: 0,
+		velCol: 0,
 		symbol: PaddleSymbol,
 	}
 
 	playerRight = &GameObject{
-		row: paddleStart, col: width - 1, width: 1, height: PaddleHeight,
-		velRow: 0, velCol: 0,
+		row: paddleStart,
+		col: width - 1,
+		width: 1,
+		height: PaddleHeight,
+		velRow: 0,
+		velCol: 0,
 		symbol: PaddleSymbol,
 	}
 
 	ball = &GameObject{
-		row: height / 2, col: width / 2, width: 1, height: 1,
-		velRow: VelocityRow, velCol: VelocityCol,
+		row: height / 2,
+		col: width / 2,
+		width: 1,
+		height: 1,
+		velRow: VelocityRow,
+		velCol: VelocityCol,
 		symbol: BallSymbol,
 	}
 
@@ -185,16 +189,17 @@ func initGameState() {
 
 func handleInput(key string) {
 	_, screenHeight := screen.Size()
-	if key == "Rune[q]" {
+
+	if key == "Rune[q]" || key == "Esc" {
 		screen.Fini()
 		os.Exit(0)
 	} else if key == "Rune[w]" && playerLeft.row > 0 {
 		playerLeft.row--
-	} else if key == "Rune[s]" && playerLeft.row+playerLeft.height < screenHeight {
+	} else if key == "Rune[s]" && (playerLeft.row + playerLeft.height) < screenHeight {
 		playerLeft.row++
 	} else if key == "Up" && playerRight.row > 0 {
 		playerRight.row--
-	} else if key == "Down" && playerRight.row+playerRight.height < screenHeight {
+	} else if key == "Down" && (playerRight.row + playerRight.height) < screenHeight {
 		playerRight.row++
 	}
 }
